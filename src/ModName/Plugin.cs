@@ -82,13 +82,13 @@ namespace PeakRopes
 
 		private const float MaxRopeLength = 4f;
 
-		private const float PullStrength = 20f;
+		private const float PullStrength = 200f; // was 20f
 
 		private const float SuspensionStrength = 28f;
 
 		private const float SuspensionDamping = 10f;
 
-		private const float MaxPullForce = 110f;
+		private const float MaxPullForce = 1100f; // was 110f
 
 		private Dictionary<string, LineRenderer> chainLines = new Dictionary<string, LineRenderer>();
 
@@ -275,26 +275,26 @@ namespace PeakRopes
 			{
 				return;
 			}
-			float num = Vector3.Distance(myHip.position, hip.position);
+			float distance = Vector3.Distance(myHip.position, hip.position);
 			Vector3 val = hip.position - myHip.position;
 			Vector3 normalized = ((Vector3)(val)).normalized;
-			float num2 = 5.5f;
-			if (num > num2)
+			float stretchedChainLength = ChainLength + 0.5f;
+			if (distance > stretchedChainLength)
 			{
-				float num3 = num - num2;
-				float num4 = Mathf.Clamp01(num3 / ChainLength);
-				float num5 = num3 * PullStrength * (0.35f + num4);
-				myRigidbody.AddForce(normalized * Mathf.Min(num5, MaxPullForce), (ForceMode)5);
+				float newDiff = distance - stretchedChainLength;
+				float num4 = Mathf.Clamp01(newDiff / ChainLength);
+				float pullForce = newDiff * PullStrength * (0.35f + num4);
+				myRigidbody.AddForce(normalized * Mathf.Min(pullForce, MaxPullForce), (ForceMode)5);
 			}
-			if (num > MaxRopeLength)
+			if (distance > MaxRopeLength)
 			{
-				float num6 = num - MaxRopeLength;
-				float num7 = num6 * SuspensionStrength;
+				float ropeDiff = distance - MaxRopeLength;
+				float num7 = ropeDiff * SuspensionStrength;
 				myRigidbody.AddForce(normalized * Mathf.Min(num7, 165f), (ForceMode)5);
-				float num8 = Vector3.Dot(myRigidbody.linearVelocity, normalized);
-				if (num8 < 0f)
+				float dotProduct = Vector3.Dot(myRigidbody.linearVelocity, normalized);
+				if (dotProduct < 0f) // dotProduct is negative if we're going in roughly the opposite direction of `normalized`
 				{
-					myRigidbody.AddForce(normalized * ((0f - num8) * SuspensionDamping), (ForceMode)5);
+					myRigidbody.AddForce(normalized * ((0f - dotProduct) * SuspensionDamping), (ForceMode)5);
 				}
 			}
 		}
