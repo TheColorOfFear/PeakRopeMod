@@ -30,7 +30,7 @@ using UnityEngine;
 
 namespace PeakRopes
 {
-	[BepInPlugin("PeakRopes", "My first plugin", "1.0.0")]
+	[BepInPlugin("DIMITRINGUYEN", "DIMITRINGUYEN", "4.2.0")]
 	public class Plugin : BaseUnityPlugin
 	{
 		internal static ManualLogSource Log;
